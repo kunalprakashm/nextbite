@@ -1,0 +1,15 @@
+{
+  "name": "nextbite",
+  "version": "1.0.0",
+  "description": "AI-Powered Restaurant Recommendations",
+  "main": "index.js",
+  "scripts": {
+    "dev": "netlify dev"
+  },
+  "dependencies": {
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  }
+}
