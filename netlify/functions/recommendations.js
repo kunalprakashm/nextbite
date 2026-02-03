@@ -138,16 +138,17 @@ IMPORTANT RULES:
 
 Please provide 2-3 restaurant recommendations. For each recommendation, provide:
 1. A major chain or well-established franchise name that has locations in ${location}
-2. A brief, engaging description of why it fits their mood
-3. Estimated distance/time if applicable
-4. Typical hours to confirm it's likely open now
+2. The specific street address of a real location in ${location}
+3. A brief, engaging description of why it fits their mood
+4. Estimated distance/time if applicable
+5. Typical hours to confirm it's likely open now
 
-Format your response as a JSON array with objects containing: name, description, address (optional), distance (optional), rating (optional), hours (optional).
+Format your response as a JSON array with objects containing: name, description, address, distance, rating (optional), hours.
 
 Example format:
 [
-  {"name": "Starbucks Reserve", "description": "Perfect cozy spot for your coffee craving with artisanal brews and fresh pastries.", "distance": "5 min walk", "hours": "Open until 9 PM"},
-  {"name": "Sweetgreen", "description": "Fresh, healthy options with amazing grain bowls and smoothies.", "distance": "10 min walk", "hours": "Open until 10 PM"}
+  {"name": "Starbucks Reserve", "address": "123 Main St, Seattle, WA 98101", "description": "Perfect cozy spot for your coffee craving with artisanal brews and fresh pastries.", "distance": "5 min walk", "hours": "Open until 9 PM"},
+  {"name": "Sweetgreen", "address": "456 Pike St, Seattle, WA 98101", "description": "Fresh, healthy options with amazing grain bowls and smoothies.", "distance": "10 min walk", "hours": "Open until 10 PM"}
 ]
 
 Respond ONLY with the JSON array, no other text.`;
