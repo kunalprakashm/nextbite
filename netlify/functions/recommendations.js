@@ -109,7 +109,7 @@ async function getPlacesFromFoursquare(location, mood, maxDistance) {
     try {
         // Search for places
         const searchResponse = await fetch(
-            `https://api.foursquare.com/v3/places/search?query=${encodeURIComponent(query)}&near=${encodeURIComponent(location)}&categories=${categoryId}&limit=5&sort=RELEVANCE&open_now=true`,
+            `https://api.foursquare.com/v3/places/search?query=${encodeURIComponent(query)}&near=${encodeURIComponent(location)}&categories=${categoryId}&limit=10&sort=RATING&open_now=true&min_price=1&max_price=4`,
             {
                 headers: {
                     'Authorization': process.env.FOURSQUARE_API_KEY,
@@ -335,13 +335,13 @@ async function getGeminiRecommendations(location, mood, timeAvailable, maxDistan
 Current time: ${currentTime}
 
 IMPORTANT RULES:
-1. ONLY recommend major chains or well-established franchises (like Starbucks, Peet's Coffee, Dutch Bros, Panera, Chipotle, etc.) that are guaranteed to still be in business
-2. DO NOT recommend small local cafes or independent restaurants as they may have closed
+1. Prioritize well-known LOCAL favorites and highly-rated independent spots in ${location}
+2. Include a mix of popular local gems and established places
 3. Only recommend places likely to be OPEN at this time based on typical business hours
-4. Focus on popular, nationwide or regional chains with multiple locations
+4. Focus on places with great reviews and unique character
 
 Please provide 2-3 restaurant recommendations. For each recommendation, provide:
-1. A major chain or well-established franchise name that has locations in ${location}
+1. A real, popular restaurant or cafe name in ${location} (prefer local favorites over chains)
 2. The specific street address of a real location in ${location}
 3. A brief, engaging description of why it fits their mood
 4. Estimated distance/time if applicable
