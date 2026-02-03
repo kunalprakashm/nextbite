@@ -130,10 +130,14 @@ Current time: ${currentTime}
 
 ${placesContext}
 
-IMPORTANT: Only recommend places that are likely to be OPEN right now. Consider typical business hours - avoid recommending places that would be closed at this time.
+IMPORTANT RULES:
+1. ONLY recommend major chains or well-established franchises (like Starbucks, Peet's Coffee, Dutch Bros, Panera, Chipotle, etc.) that are guaranteed to still be in business
+2. DO NOT recommend small local cafes or independent restaurants as they may have closed
+3. Only recommend places likely to be OPEN at this time based on typical business hours
+4. Focus on popular, nationwide or regional chains with multiple locations
 
 Please provide 2-3 restaurant recommendations. For each recommendation, provide:
-1. A real, well-known restaurant or cafe name that exists in ${location}
+1. A major chain or well-established franchise name that has locations in ${location}
 2. A brief, engaging description of why it fits their mood
 3. Estimated distance/time if applicable
 4. Typical hours to confirm it's likely open now
