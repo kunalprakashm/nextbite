@@ -122,21 +122,28 @@ async function getGeminiRecommendations(location, mood, timeAvailable, maxDistan
         ? `Here are some real places in the area to consider: ${places.map(p => p.name).join(', ')}.`
         : '';
 
+    const currentTime = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', minute: 'numeric', hour12: true, weekday: 'long' });
+
     const prompt = `You are a helpful restaurant recommendation assistant. A user in ${location} is ${moodDescriptions[mood] || 'looking for food'}. They have ${timeAvailable} minutes and can travel up to ${maxDistance} meters.
+
+Current time: ${currentTime}
 
 ${placesContext}
 
+IMPORTANT: Only recommend places that are likely to be OPEN right now. Consider typical business hours - avoid recommending places that would be closed at this time.
+
 Please provide 2-3 restaurant recommendations. For each recommendation, provide:
-1. A restaurant name (can be a real popular chain or a descriptive type like "Local Italian Trattoria")
+1. A real, well-known restaurant or cafe name that exists in ${location}
 2. A brief, engaging description of why it fits their mood
 3. Estimated distance/time if applicable
+4. Typical hours to confirm it's likely open now
 
-Format your response as a JSON array with objects containing: name, description, address (optional), distance (optional), rating (optional).
+Format your response as a JSON array with objects containing: name, description, address (optional), distance (optional), rating (optional), hours (optional).
 
 Example format:
 [
-  {"name": "Cafe Luna", "description": "Perfect cozy spot for your coffee craving with artisanal brews and fresh pastries.", "distance": "5 min walk"},
-  {"name": "The Green Bowl", "description": "Fresh, healthy options with amazing grain bowls and smoothies.", "distance": "10 min walk"}
+  {"name": "Starbucks Reserve", "description": "Perfect cozy spot for your coffee craving with artisanal brews and fresh pastries.", "distance": "5 min walk", "hours": "Open until 9 PM"},
+  {"name": "Sweetgreen", "description": "Fresh, healthy options with amazing grain bowls and smoothies.", "distance": "10 min walk", "hours": "Open until 10 PM"}
 ]
 
 Respond ONLY with the JSON array, no other text.`;
