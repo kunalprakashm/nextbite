@@ -126,6 +126,15 @@
             border-radius: 8px;
             margin-top: 20px;
         }
+        .notice {
+            background: #fff3cd;
+            color: #856404;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ffc107;
+            font-size: 14px;
+        }
         .mood-options {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -284,7 +293,14 @@
                 const data = await response.json();
 
                 if (data.recommendations && data.recommendations.length > 0) {
-                    resultsDiv.innerHTML = data.recommendations.map(rec => `
+                    let html = '';
+
+                    // Show notice if using fallback data
+                    if (data.rateLimitReached) {
+                        html += `<div class="notice">&#9888; ${data.message}</div>`;
+                    }
+
+                    html += data.recommendations.map(rec => `
                         <div class="recommendation">
                             <h3>${rec.name}</h3>
                             <p>${rec.description}</p>
@@ -297,6 +313,8 @@
                             </div>
                         </div>
                     `).join('');
+
+                    resultsDiv.innerHTML = html;
                 } else {
                     resultsDiv.innerHTML = '<p>No recommendations found. Try adjusting your preferences.</p>';
                 }

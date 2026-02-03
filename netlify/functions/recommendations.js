@@ -35,27 +35,43 @@ exports.handler = async (event, context) => {
         }
 
         let recommendations;
+        let source = 'foursquare'; // Track data source
+        let rateLimitReached = false;
 
         // Try Foursquare first for real, verified places
         if (process.env.FOURSQUARE_API_KEY) {
-            const places = await getPlacesFromFoursquare(location, mood, maxDistance);
+            const foursquareResult = await getPlacesFromFoursquare(location, mood, maxDistance);
 
-            if (places.length > 0) {
+            if (foursquareResult.rateLimited) {
+                // Foursquare rate limit reached, fallback to Gemini
+                rateLimitReached = true;
+                source = 'ai';
+                recommendations = await getGeminiRecommendations(location, mood, timeAvailable, maxDistance);
+            } else if (foursquareResult.places.length > 0) {
                 // Enhance Foursquare results with AI descriptions
-                recommendations = await enhanceWithGemini(places, mood, location);
+                recommendations = await enhanceWithGemini(foursquareResult.places, mood, location);
             } else {
-                // Fallback to Gemini-only if no Foursquare results
+                // No Foursquare results, fallback to Gemini-only
+                source = 'ai';
                 recommendations = await getGeminiRecommendations(location, mood, timeAvailable, maxDistance);
             }
         } else {
             // No Foursquare key, use Gemini only
+            source = 'ai';
             recommendations = await getGeminiRecommendations(location, mood, timeAvailable, maxDistance);
         }
 
         return {
             statusCode: 200,
             headers,
-            body: JSON.stringify({ recommendations })
+            body: JSON.stringify({
+                recommendations,
+                source,
+                rateLimitReached,
+                message: rateLimitReached
+                    ? 'Live data temporarily unavailable. Showing AI-generated recommendations.'
+                    : null
+            })
         };
 
     } catch (error) {
@@ -102,10 +118,16 @@ async function getPlacesFromFoursquare(location, mood, maxDistance) {
             }
         );
 
+        // Check for rate limiting (429) or quota exceeded (402)
+        if (searchResponse.status === 429 || searchResponse.status === 402) {
+            console.log('Foursquare rate limit reached:', searchResponse.status);
+            return { places: [], rateLimited: true };
+        }
+
         if (!searchResponse.ok) {
             const errorText = await searchResponse.text();
             console.log('Foursquare search error:', searchResponse.status, errorText);
-            return [];
+            return { places: [], rateLimited: false };
         }
 
         const searchData = await searchResponse.json();
@@ -153,10 +175,10 @@ async function getPlacesFromFoursquare(location, mood, maxDistance) {
             })
         );
 
-        return detailedPlaces.filter(p => p !== null);
+        return { places: detailedPlaces.filter(p => p !== null), rateLimited: false };
     } catch (error) {
         console.error('Foursquare error:', error);
-        return [];
+        return { places: [], rateLimited: false };
     }
 }
 
